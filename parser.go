@@ -52,34 +52,31 @@ func ParseFile(filename string,
 
 	defer file.Close()
 
+	identMat := NewMatrix()
+	MakeIdentity(m)
+	rcs := make([][][]float64, 0)
+	rcs = append(rcs, )
+
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
 
 		// Immediate operations (no arguments)
-		if line == "ident" {
-			MakeIdentity(transform)
+		if line == "push" {
+			rcs.Push()
 			continue
-		} else if line == "display" {
-			ClearScreen(screen)
-			DrawPolygons(edges, screen)
+		}
+		if line == "pop" {
+			rcs.Pop()
+		}
+		if line == "display" {
 			DisplayScreen(screen)
 			continue
-		} else if line == "clear" {
-			edges = make([][]float64, 4)
-			continue
-		} else if line == "apply" {
-			MultiplyMatrices(&transform, &edges)
-			continue
-		} else if line == "quit" {
+		}
+		if line == "quit" {
 			return
-		} else if line == "draw" {
-			DrawPolygons(edges, screen)
-			continue
-		} else if line == "show" {
-			DisplayScreen(screen)
-			continue
-		}	else if strings.Contains(line, "color") {
+		}
+		if strings.Contains(line, "color") {
 			SetColor(strings.Fields(line)[1])
 			continue
 		}
@@ -93,22 +90,7 @@ func ParseFile(filename string,
 		// Non-immediate operations (has arguments)
 		params := scanner.Text()
 
-		if line == "save" {
-			WriteScreenToExtension(screen, params)
-		} else if line == "line" {
-			AddEdge(edges, FloatParams(params)...)
-		} else if line == "circle" {
-			AddCircle(edges, FloatParams(params)...)
-		} else if line == "sphere" {
-			AddSphere(edges, FloatParams(params)...)
-		} else if line == "box" {
-			AddBox(edges, FloatParams(params)...)
-		} else if line == "torus" {
-			AddTorus(edges, FloatParams(params)...)
-		} else if line == "hermite" || line == "bezier" {
-			p := FloatParams(params)
-			AddCurve(edges, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], 0.001, line)
-		}	else {
+		if line == "move" || line == "scale" || line == "rotate"{
 			var stepTransform [][]float64
 
 			if line == "move" {
@@ -132,12 +114,32 @@ func ParseFile(filename string,
 				}
 			}
 
-			if len(transform) == 0 {
-				transform = stepTransform
-			} else {
-				MultiplyMatrices(&stepTransform, &transform)
-			}
+			MultiplyMatrices(rcs.Peek(), stepTransform)
+			continue
 		}
+
+		if line == "save" {
+			WriteScreenToExtension(screen, params)
+			continue
+		}
+
+		temp := make([][]float64, 4)
+		if line == "line" {
+			AddEdge(temp, FloatParams(params)...)
+		} else if line == "circle" {
+			AddCircle(temp, FloatParams(params)...)
+		} else if line == "sphere" {
+			AddSphere(temp, FloatParams(params)...)
+		} else if line == "box" {
+			AddBox(temp, FloatParams(params)...)
+		} else if line == "torus" {
+			AddTorus(temp, FloatParams(params)...)
+		}
+		MultiplyMatrices(&temp, rcs.Peek())
+		if line == "box" || line == "sphere" || line == "torus" {
+			DrawPolygons(temp, screen)
+		} else {
+			DrawLines(temp, screen)
 	}
 
 	if err := scanner.Err(); err != nil {
