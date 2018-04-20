@@ -170,3 +170,11 @@ func MakeRotZ(theta float64) (m [][]float64) {
 	m[1][0], m[1][1] = sin, cos
 	return
 }
+
+func TranslateMatrix(m [][]float64) [][]float64 {
+	res := make([][]float64, 0)
+	for i := range m[0] {
+		res = append(res, ExtractColumn(m, i))
+	}
+	return res
+}

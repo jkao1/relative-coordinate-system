@@ -1,23 +1,32 @@
 package main
 
-type struct Stack {
-	[][][]float64
+type Stack struct {
+	ary [][][]float64
 }
 
-func NewCStack() *Stack {
+func NewRCS() *Stack {
 	stack := new(Stack)
 	m := NewMatrix()
 	MakeIdentity(m)
-	return &append(stack, m)
+	stack.ary = [][][]float64{m}
+	return stack
 }
 
-func (*s Stack) Push() {
-	head := Copy2d(s[len(s) - 1])
-	s := append(s, head)
+func (s *Stack) Push() {
+	head := Copy2d(*s.Peek())
+  s.ary = append(s.ary, head)
 }
 
-func (*s Stack) Peek() *Stack {
-	return &s[len(s) - 1]
+func (s *Stack) Pop() {
+	s.ary = s.ary[:len(s.ary) - 1]
+}
+
+func (s *Stack) Peek() *[][]float64 {
+	return &s.ary[len(s.ary) - 1]
+}
+
+func (s *Stack) Add(m [][]float64) {
+	s.ary = append(s.ary, m)
 }
 
 func Copy2d(m [][]float64) [][]float64 {

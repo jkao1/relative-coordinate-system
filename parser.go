@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"fmt"
 )
 
 /* ParseFile goes through the file named filename and performs all of the
@@ -53,9 +54,9 @@ func ParseFile(filename string,
 	defer file.Close()
 
 	identMat := NewMatrix()
-	MakeIdentity(m)
-	rcs := make([][][]float64, 0)
-	rcs = append(rcs, )
+	MakeIdentity(identMat)
+	rcs := NewRCS()
+	rcs.Add(identMat)
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -68,6 +69,7 @@ func ParseFile(filename string,
 		}
 		if line == "pop" {
 			rcs.Pop()
+			continue
 		}
 		if line == "display" {
 			DisplayScreen(screen)
@@ -85,6 +87,8 @@ func ParseFile(filename string,
 			continue
 		}
 
+		fmt.Println("------------")
+		fmt.Println(line)
 		scanner.Scan()
 
 		// Non-immediate operations (has arguments)
@@ -113,8 +117,7 @@ func ParseFile(filename string,
 					stepTransform = MakeRotZ(numDegrees)
 				}
 			}
-
-			MultiplyMatrices(rcs.Peek(), stepTransform)
+			MultiplyMatrices(&stepTransform, rcs.Peek())
 			continue
 		}
 
@@ -135,11 +138,15 @@ func ParseFile(filename string,
 		} else if line == "torus" {
 			AddTorus(temp, FloatParams(params)...)
 		}
-		MultiplyMatrices(&temp, rcs.Peek())
+		temp = TranslateMatrix(temp)
+		fmt.Printf("temp: (%dx%d)\n", len(temp), len(temp[0]))
+		PrintMatrix(temp)
+		MultiplyMatrices(rcs.Peek(), &temp)
 		if line == "box" || line == "sphere" || line == "torus" {
 			DrawPolygons(temp, screen)
 		} else {
 			DrawLines(temp, screen)
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
