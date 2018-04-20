@@ -5,5 +5,5 @@ func main() {
 	transform := make([][]float64, 0)
 	edges := make([][]float64, 4)
 
-	ParseFile("test", transform, edges, screen)
+	ParseFile("script", transform, edges, screen)
 }

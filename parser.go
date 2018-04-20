@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"fmt"
 )
 
 /* ParseFile goes through the file named filename and performs all of the
@@ -87,8 +86,6 @@ func ParseFile(filename string,
 			continue
 		}
 
-		fmt.Println("------------")
-		fmt.Println(line)
 		scanner.Scan()
 
 		// Non-immediate operations (has arguments)
@@ -138,10 +135,7 @@ func ParseFile(filename string,
 		} else if line == "torus" {
 			AddTorus(temp, FloatParams(params)...)
 		}
-		temp = TranslateMatrix(temp)
-		PrintMatrix(temp)
 		MultiplyMatrices(rcs.Peek(), &temp)
-		temp = TranslateMatrix(temp)
 		if line == "box" || line == "sphere" || line == "torus" {
 			DrawPolygons(temp, screen)
 		} else {
