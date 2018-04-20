@@ -139,7 +139,6 @@ func ParseFile(filename string,
 			AddTorus(temp, FloatParams(params)...)
 		}
 		temp = TranslateMatrix(temp)
-		fmt.Printf("temp: (%dx%d)\n", len(temp), len(temp[0]))
 		PrintMatrix(temp)
 		MultiplyMatrices(rcs.Peek(), &temp)
 		if line == "box" || line == "sphere" || line == "torus" {
