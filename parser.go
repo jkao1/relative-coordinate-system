@@ -141,6 +141,7 @@ func ParseFile(filename string,
 		temp = TranslateMatrix(temp)
 		PrintMatrix(temp)
 		MultiplyMatrices(rcs.Peek(), &temp)
+		temp = TranslateMatrix(temp)
 		if line == "box" || line == "sphere" || line == "torus" {
 			DrawPolygons(temp, screen)
 		} else {
