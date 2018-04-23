@@ -70,6 +70,22 @@ func MultiplyMatrices(m1Ptr, m2Ptr *[][]float64) {
 	*m2Ptr = product
 }
 
+// MultiplyMatrices multiples two matrices and stores it in the second matrix
+// given.
+func MultiplyMatricesSwitched(m1Ptr, m2Ptr *[][]float64) {
+	m1, m2 := *m1Ptr, *m2Ptr
+	product := NewMatrix(len(m1), len(m2[0]))
+
+	for i, row := range m1 {
+		for j := 0; j < len(m2[0]); j++ {
+			col := ExtractColumn(m2, j)
+			product[i][j] = vectorDot(row, col)
+		}
+	}
+
+	*m2Ptr = product
+}
+
 // ExtractColumn extracts the column of a matrix. It returns that column as
 // a slice.
 func ExtractColumn(matrix [][]float64, colIndex int) []float64 {
