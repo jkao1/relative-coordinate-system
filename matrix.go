@@ -83,7 +83,7 @@ func MultiplyMatricesSwitched(m1Ptr, m2Ptr *[][]float64) {
 		}
 	}
 
-	*m2Ptr = product
+	*m1Ptr = product
 }
 
 // ExtractColumn extracts the column of a matrix. It returns that column as

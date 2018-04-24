@@ -114,7 +114,7 @@ func ParseFile(filename string,
 					stepTransform = MakeRotZ(numDegrees)
 				}
 			}
-			MultiplyMatrices(&stepTransform, rcs.Peek())
+			MultiplyMatricesSwitched(rcs.Peek(), &stepTransform)
 			continue
 		}
 
@@ -135,7 +135,7 @@ func ParseFile(filename string,
 		} else if line == "torus" {
 			AddTorus(temp, FloatParams(params)...)
 		}
-		MultiplyMatricesSwitched(rcs.Peek(), &temp)
+		MultiplyMatrices(rcs.Peek(), &temp)
 		if line == "box" || line == "sphere" || line == "torus" {
 			DrawPolygons(temp, screen)
 		} else {
